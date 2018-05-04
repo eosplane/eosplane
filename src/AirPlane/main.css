@@ -1,0 +1,114 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+#contentdiv{
+    position: absolute;
+    /*left: 300px;*/
+}
+#startdiv{
+    /*width: 320px;
+    height: 568px;
+    background-image: url("/image/开始背景.png");*/
+    width: 480px;
+    height: 852px;
+    background-image: url("/image/background.png");
+    /*display: none;*/
+}
+#startdiv button{
+    position: absolute;
+    top: 450px;
+    left: 85px;
+    width: 150px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 10px ;/*圆角*/
+    background-color:azure;
+}
+#maindiv{
+    /*width: 320px;
+    height: 568px;
+    background-image: url("/image/bg.png");*/
+    width: 480px;
+    height: 852px;
+    background-image: url("/image/background.png");
+    display: none;
+}
+#maindiv img{
+    position: absolute;
+    z-index: 1;
+}
+#scorediv{
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    left: 10px;;
+}
+#suspenddiv{
+    position: absolute;
+    top: 220px;
+    left: 85px;
+    z-index: 2;
+    display: none;
+}
+#suspenddiv button{
+    width: 150px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 10px ;/*圆角*/
+    background-color:azure;
+    margin-bottom: 20px;
+}
+#bgdiv{
+    position: absolute;
+    top: 220px;
+    left: 85px;
+    z-index: 2;
+    display: none;
+}
+#bgdiv button{
+    width: 150px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 10px ;/*圆角*/
+    background-color:azure;
+    margin-bottom: 20px;
+}
+#enddiv{
+    position: absolute;
+    top: 220px;
+    left: 80px;;
+    border: 1px solid gray;
+    border-radius: 10px;
+    text-align: center;
+    background-color: azure;
+    z-index: 2;
+    display: none;
+}
+.planetext{
+    width: 160px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+}
+#endscore{
+    width: 160px;
+    height: 80px;
+    font-size: 20px;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+    line-height: 80px;
+}
+#enddiv div{
+    width: 160px;
+    height: 40px;
+}
+#enddiv div button{
+    width: 90px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 30px;
+    margin-top: 5px;
+}

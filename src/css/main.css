@@ -1,0 +1,37 @@
+.center {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.areaChart {
+  margin: 0 auto;
+}
+
+.planeCardTable {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.paginator {
+  width: 70%;
+  margin: 0 16%;
+}
+
+
+@media (max-width: 480px) {
+  .center {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .planeCardTable {
+    width: 100%;
+    margin: 0 17%;
+  }
+
+  .paginator {
+    width: 90%;
+    /*margin: 0 5%;*/
+    /*display: block;*/
+  }
+}
