@@ -9,6 +9,8 @@ import BidDialog from './BidDialog';
 import BidHistory from './BidHistory';
 import PlaneTimeLine from './PlaneTimeLine';
 import CountDownTimer from './CountDownTimer'
+import { CircularProgress } from 'material-ui/Progress';
+
 
 import bids from '../sample-bids';
 
@@ -122,6 +124,11 @@ const styles = {
     float: 'right',
   },
 
+  Progress: {
+    marginTop: '10%',
+    marginLeft: '45%',
+  },
+
 };
 
 class Plane extends React.Component {
@@ -152,6 +159,7 @@ class Plane extends React.Component {
     this.goToGamePanel = this.goToGamePanel.bind(this);
 
     this.state = {
+      progress: true,
       plane: {},
       bidHistory: [],
       showSaleDialog: false,
@@ -376,75 +384,87 @@ class Plane extends React.Component {
 
     }
 
+    let planePanel = "";
+
+    if(this.state.progress) {
+      planePanel = <div className={classes.Progress}>
+                    <CircularProgress/>
+                </div>
+    } else {
+      planePanel =
+          <div>
+                <div className={classes.PlaneCard} >
+                  <img className={classes.PlaneImage} src={this.state.plane.image} alt={this.state.plane.status}/>
+                  <div className={classes.PlaneStatus}>
+                    <div className={classes.PlaneStatusItem}>
+                      <span className={classes.PlaneStatusItemIcon}>
+                        <i className={classes.Icon}></i>
+                      </span>
+                      <span className={classes.PlaneStatusItemText}>
+                        <span className={classes.PlaneStatusLabel}>For sale</span>
+                      <span className={classes.PlaneStatusNote}><small> Ξ </small>{this.state.plane.price}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={classes.PlaneCardDetails}>
+                    <div className={classes.PlaneCardDetailsLevel}><img src="/image/diamond1.gif" alt="d"/><img src="/image/diamond2.gif" alt="d"/><img src="/image/diamond2.gif" alt="2"/></div>
+                    <div className={classes.PlaneCardDetailsItemHighlight}>Plane <span className={classes.PlaneCardDetailsItem}>{this.state.plane.id}</span></div>
+                    <div className={classes.PlaneCardDetailsItemHighlight}>Score <span className={classes.PlaneCardDetailsItem}>{this.state.plane.score}</span></div>
+                    <div className={classes.PlaneCardDetailsItemHighlight}>Time left <CountDownTimer className={classes.PlaneCardDetailsItem} seconds={56352} /></div>
+
+                  </div>
+                </div>
+                <div style={{width: '200px', margin: '0 auto' }}>
+                  {upgradeButton}
+                  {saleButton}
+                  {changePriceButton}
+                  {notSaleButton}
+                  {auctionButton}
+                  {bidButton}
+                  {buyButton}
+                </div>
+
+              <PlaneTimeLine/>
+              {bidHistory}
+              <SaleDialog
+                plane={this.state.plane}
+                showSaleDialog={this.state.showSaleDialog}
+                setPrice={this.setPrice}
+                closeSaleDialog={this.closeSaleDialog}
+              />
+              <NotSaleDialog
+                showNotSaleDialog={this.state.showNotSaleDialog}
+                notSale={this.notSale}
+                closeNotSaleDialog={this.closeNotSaleDialog}
+              />
+              <AuctionDialog
+                showAuctionDialog={this.state.showAuctionDialog}
+                auction={this.auction}
+                closeAuctionDialog={this.closeAuctionDialog}
+              />
+              <BuyDialog
+                plane={this.state.plane}
+                account={this.props.account}
+                showBuyDialog={this.state.showBuyDialog}
+                buy={this.buy}
+                closeBuyDialog={this.closeBuyDialog}
+              />
+              <BidDialog
+                plane={this.state.plane}
+                account={this.props.account}
+                bidHistory={this.state.bidHistory}
+                showBidDialog={this.state.showBidDialog}
+                bid={this.bid}
+                closeBidDialog={this.closeBidDialog}
+              />
+            </div>
+    }
+
 
     return (
       <div className="center">
-
-          <div className={classes.PlaneCard} >
-            <img className={classes.PlaneImage} src={this.state.plane.image} alt={this.state.plane.status}/>
-            <div className={classes.PlaneStatus}>
-              <div className={classes.PlaneStatusItem}>
-                <span className={classes.PlaneStatusItemIcon}>
-                  <i className={classes.Icon}></i>
-                </span>
-                <span className={classes.PlaneStatusItemText}>
-                  <span className={classes.PlaneStatusLabel}>For sale</span>
-                <span className={classes.PlaneStatusNote}><small> Ξ </small>{this.state.plane.price}</span>
-                </span>
-              </div>
-            </div>
-
-            <div className={classes.PlaneCardDetails}>
-              <div className={classes.PlaneCardDetailsLevel}><img src="/image/diamond1.gif" alt="d"/><img src="/image/diamond2.gif" alt="d"/><img src="/image/diamond2.gif" alt="2"/></div>
-              <div className={classes.PlaneCardDetailsItemHighlight}>Plane <span className={classes.PlaneCardDetailsItem}>{this.state.plane.id}</span></div>
-              <div className={classes.PlaneCardDetailsItemHighlight}>Score <span className={classes.PlaneCardDetailsItem}>{this.state.plane.score}</span></div>
-              <div className={classes.PlaneCardDetailsItemHighlight}>Time left <CountDownTimer className={classes.PlaneCardDetailsItem} seconds={56352} /></div>
-
-            </div>
-          </div>
-          <div style={{width: '200px', margin: '0 auto' }}>
-            {upgradeButton}
-            {saleButton}
-            {changePriceButton}
-            {notSaleButton}
-            {auctionButton}
-            {bidButton}
-            {buyButton}
-          </div>
-
-        <PlaneTimeLine/>
-        {bidHistory}
-        <SaleDialog
-          plane={this.state.plane}
-          showSaleDialog={this.state.showSaleDialog}
-          setPrice={this.setPrice}
-          closeSaleDialog={this.closeSaleDialog}
-        />
-        <NotSaleDialog
-          showNotSaleDialog={this.state.showNotSaleDialog}
-          notSale={this.notSale}
-          closeNotSaleDialog={this.closeNotSaleDialog}
-        />
-        <AuctionDialog
-          showAuctionDialog={this.state.showAuctionDialog}
-          auction={this.auction}
-          closeAuctionDialog={this.closeAuctionDialog}
-        />
-        <BuyDialog
-          plane={this.state.plane}
-          account={this.props.account}
-          showBuyDialog={this.state.showBuyDialog}
-          buy={this.buy}
-          closeBuyDialog={this.closeBuyDialog}
-        />
-        <BidDialog
-          plane={this.state.plane}
-          account={this.props.account}
-          bidHistory={this.state.bidHistory}
-          showBidDialog={this.state.showBidDialog}
-          bid={this.bid}
-          closeBidDialog={this.closeBidDialog}
-        />
+        {planePanel}
       </div>
     )
   }
