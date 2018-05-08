@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Select from 'material-ui/Select';
-import { CircularProgress } from 'material-ui/Progress';
 import { withStyles } from 'material-ui/styles';
 import PlaneGridList from './PlaneGridList';
-import planes from '../sample-planes';
+import axios from 'axios';
+import { CircularProgress } from 'material-ui/Progress';
+import STATUS from '../PlaneStatus';
+import crc from 'js-crc';
 
 const styles = theme => ({
   root: {
@@ -70,6 +72,7 @@ class Planes extends React.Component {
 
     this.state = {
       progress: true,
+      planes: [],
       value: 0,
       sortBy: 0,
     };
@@ -84,24 +87,25 @@ class Planes extends React.Component {
         progress: false,
       });
     }, 2e3);
-    // let selected = data.selected;
-    // let offset = Math.ceil(selected * this.props.perPage);
-    //
-    // this.setState({offset: offset}, () => {
-    //   this.loadCommentsFromServer();
-    // });
   };
 
   handleTabChange = (event, value) => {
 
     this.setState({ value: value });
 
-    this.setState({progress: true});
-    setTimeout(() => {
-      this.setState({
-        progress: false,
+    // get plane
+    axios.get('http://localhost:8080/fetch_many_planes?id=' + this.props.planeId)
+      .then( (response) => {
+
+        this.setState({
+          planes: response.data,
+          progress: false,
+        });
+
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    }, 2e3);
 
   };
 
@@ -121,12 +125,20 @@ class Planes extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({progress: true});
-    setTimeout(() => {
-      this.setState({
-        progress: false,
+
+    // get plane
+    axios.get('http://localhost:8080/fetch_many_planes?id=' + this.props.planeId)
+      .then( (response) => {
+
+        this.setState({
+          planes: response.data,
+          progress: false,
+        });
+
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    }, 2e3);
   }
 
   render() {
@@ -140,15 +152,15 @@ class Planes extends React.Component {
                 </div>
     } else {
       if (this.state.value === 0) {
-        planeList = <PlaneGridList planes={planes} handlePageChange={this.handlePageChange}/>;
+        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
       }
 
       if (this.state.value === 1) {
-        planeList = <PlaneGridList planes={planes} handlePageChange={this.handlePageChange}/>;
+        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
       }
 
       if (this.state.value === 2) {
-        planeList = <PlaneGridList planes={planes} handlePageChange={this.handlePageChange}/>;
+        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
       }
     }
 

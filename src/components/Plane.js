@@ -293,7 +293,7 @@ class Plane extends React.Component {
 
   componentWillMount() {
     // get plane
-    axios.get('http://localhost:8080/getPlane?id=' + this.props.planeId)
+    axios.get('http://localhost:8080/fetch_one_plane?id=' + this.props.planeId)
       .then( (response) => {
         let plane = {
           id: response.data.plane_id,

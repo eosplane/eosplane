@@ -237,7 +237,7 @@ class PlaneGridList extends React.Component {
                       </span>
                       <span className={classes.PlaneStatusItemText}>
                         <span className={classes.PlaneStatusLabel}>For sale</span>
-                      <span className={classes.PlaneStatusNote}><small> Ξ </small>{plane.price}</span>
+                      <span className={classes.PlaneStatusNote}><small> Ξ </small>{plane.price.quantity}</span>
                       </span>
                     </div>
                   </div>
