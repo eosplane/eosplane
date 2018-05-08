@@ -11,7 +11,8 @@ import PlaneTimeLine from './PlaneTimeLine';
 import CountDownTimer from './CountDownTimer';
 import axios from 'axios';
 import { CircularProgress } from 'material-ui/Progress';
-import STATUS from '../PlaneStatus'
+import STATUS from '../PlaneStatus';
+import crc from 'js-crc';
 
 
 import bids from '../sample-bids';
@@ -296,7 +297,7 @@ class Plane extends React.Component {
       .then( (response) => {
         let plane = {
           id: response.data.plane_id,
-          image: "/planes/XPlane.png",
+          image: "/planes/" + crc.crc32(""+response.data.plane_id),
           desc: response.data.desc,
           score: response.data.score,
           price: response.data.price.quantity,
