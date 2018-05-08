@@ -8,8 +8,10 @@ import BuyDialog from './BuyDialog';
 import BidDialog from './BidDialog';
 import BidHistory from './BidHistory';
 import PlaneTimeLine from './PlaneTimeLine';
-import CountDownTimer from './CountDownTimer'
+import CountDownTimer from './CountDownTimer';
+import axios from 'axios';
 import { CircularProgress } from 'material-ui/Progress';
+import STATUS from '../PlaneStatus'
 
 
 import bids from '../sample-bids';
@@ -189,7 +191,7 @@ class Plane extends React.Component {
   setPrice(price) {
     const plane = {...this.state.plane};
     plane['price'] = price;
-    plane['status'] = 'forsale';
+    plane['status'] = STATUS.FOR_SALE;
     this.setState({ plane });
 
     this.closeSaleDialog();
@@ -210,7 +212,7 @@ class Plane extends React.Component {
   notSale() {
     const plane = {...this.state.plane};
     plane['price'] = 0;
-    plane['status'] = 'notforsale';
+    plane['status'] = STATUS.NOT_FOR_SALE;
     this.setState({ plane });
 
     this.closeNotSaleDialog();
@@ -231,7 +233,7 @@ class Plane extends React.Component {
   auction(startingPrice, duration) {
     const plane = {...this.state.plane};
     plane['price'] = startingPrice;
-    plane['status'] = 'forbid';
+    plane['status'] = STATUS.FOR_BID;
     this.setState({ plane });
 
     console.log("the auction will end in " + duration + " seconds");
@@ -254,7 +256,7 @@ class Plane extends React.Component {
   buy() {
     const plane = {...this.state.plane};
     plane['price'] = 0;
-    plane['status'] = 'notforsale';
+    plane['status'] = STATUS.NOT_FOR_SALE;
     plane['owner'] = this.props.account['account_name'];
     this.setState({ plane });
 
@@ -290,26 +292,34 @@ class Plane extends React.Component {
 
   componentWillMount() {
     // get plane
-    let plane = {
-      id: 9,
-      image: "/planes/XPlane.png",
-      desc: 'Everyones favorite white fish. We will cut it to the size you need and ship it.',
-      score: 442,
-      price: 29.231,
-      status: 'forbid',
-      owner: 'a1.wanglei'
-    }
+    axios.get('http://localhost:8080/getPlane?id=' + this.props.planeId)
+      .then( (response) => {
+        let plane = {
+          id: response.data.plane_id,
+          image: "/planes/XPlane.png",
+          desc: response.data.desc,
+          score: response.data.score,
+          price: response.data.price.quantity,
+          status: response.data.status,
+          owner: response.data.owner
+        }
 
-    this.setState({
-      plane: plane,
-    });
+        this.setState({
+          plane: plane,
+          progress: false,
+        });
 
-    // get bid history
-    if(plane.status === "forbid") {
-      this.setState({
-        bidHistory: bids,
+        // get bid history
+        if(plane.status === STATUS.FOR_BID) {
+          this.setState({
+            bidHistory: bids,
+          });
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    }
+
   }
 
   render() {
@@ -331,7 +341,7 @@ class Plane extends React.Component {
                         upgrade
                       </Button>
 
-      if(this.state.plane['status'] === 'notforsale'){
+      if(this.state.plane['status'] === STATUS.NOT_FOR_SALE){
         saleButton = <Button dense color="primary" onClick={this.openSaleDialog} >
                         sale
                       </Button>
@@ -341,7 +351,7 @@ class Plane extends React.Component {
                         </Button>
       }
 
-      if(this.state.plane['status'] === 'forsale'){
+      if(this.state.plane['status'] === STATUS.FOR_SALE){
         changePriceButton = <Button dense color="primary" onClick={this.openSaleDialog}>
                               change price
                             </Button>
@@ -355,7 +365,7 @@ class Plane extends React.Component {
     //others' action
     if(this.props.account['account_name'] !== this.state.plane['owner']){
 
-      if(this.state.plane['status'] === 'forsale'){
+      if(this.state.plane['status'] === STATUS.FOR_SALE){
         if (this.props.hasLogined()) {
           buyButton = <Button dense color="primary" onClick={this.openBuyDialog}>
                           buy
@@ -367,7 +377,7 @@ class Plane extends React.Component {
         }
       }
 
-      if(this.state.plane['status'] === 'forbid'){
+      if(this.state.plane['status'] === STATUS.FOR_BID){
 
         bidHistory = <BidHistory bidHistory={this.state.bidHistory} />
 
