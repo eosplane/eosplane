@@ -73,7 +73,8 @@ class Planes extends React.Component {
     this.state = {
       progress: true,
       planes: [],
-      value: 0,
+      count: 0,
+      value: STATUS.FOR_SALE,
       sortBy: 0,
     };
   }
@@ -92,20 +93,7 @@ class Planes extends React.Component {
   handleTabChange = (event, value) => {
 
     this.setState({ value: value });
-
-    // get plane
-    axios.get('http://localhost:8080/fetch_many_planes?id=' + this.props.planeId)
-      .then( (response) => {
-
-        this.setState({
-          planes: response.data,
-          progress: false,
-        });
-
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    this.fetchManyPlanes(value, -1, 0, 10);
 
   };
 
@@ -124,21 +112,25 @@ class Planes extends React.Component {
     this.context.router.transitionTo(`/plane/${planeId}`);
   }
 
-  componentWillMount() {
-
+  fetchManyPlanes = (status, sort, skip, limit) => {
     // get plane
-    axios.get('http://localhost:8080/fetch_many_planes?id=' + this.props.planeId)
+    axios.get('http://localhost:8080/fetch_many_planes?status=' + status + '&sort=' + sort + '&skip=' + skip + '&limit=' + limit)
       .then( (response) => {
-
         this.setState({
-          planes: response.data,
+          planes: response.data.planes,
+          count: response.data.count,
           progress: false,
         });
-
       })
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  componentWillMount() {
+
+    this.fetchManyPlanes(STATUS.FOR_SALE, -1, 0, 10);
+
   }
 
   render() {
@@ -151,17 +143,7 @@ class Planes extends React.Component {
                     <CircularProgress/>
                 </div>
     } else {
-      if (this.state.value === 0) {
         planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
-      }
-
-      if (this.state.value === 1) {
-        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
-      }
-
-      if (this.state.value === 2) {
-        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
-      }
     }
 
 
@@ -190,9 +172,9 @@ class Planes extends React.Component {
             value={this.state.value}
             onChange={this.handleTabChange}
             indicatorColor="teal">
-            <Tab className={classes.Tab} label="Auction" />
-            <Tab className={classes.Tab} label="For Sale" />
-            <Tab className={classes.Tab} label="All Planes"/>
+            <Tab value={STATUS.FOR_SALE} className={classes.Tab} label="For Sale" />
+            <Tab value={STATUS.FOR_BID} className={classes.Tab} label="Auction" />
+            <Tab value={STATUS.ALL} className={classes.Tab} label="All Planes"/>
           </Tabs>
 
         </AppBar>
