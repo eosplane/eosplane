@@ -10,6 +10,8 @@ import { CircularProgress } from 'material-ui/Progress';
 import STATUS from '../PlaneStatus';
 import crc from 'js-crc';
 
+const PLANES_PER_PAGE = 12;
+
 const styles = theme => ({
   root: {
     // display: 'block',
@@ -74,26 +76,21 @@ class Planes extends React.Component {
       progress: true,
       planes: [],
       count: 0,
-      value: STATUS.FOR_SALE,
+      selectedStatus: STATUS.FOR_SALE,
       sortBy: 0,
     };
   }
 
   handlePageChange = (data) => {
-    console.log(data);
 
-    this.setState({progress: true});
-    setTimeout(() => {
-      this.setState({
-        progress: false,
-      });
-    }, 2e3);
+    this.fetchManyPlanes(this.state.selectedStatus, -1, data.selected * PLANES_PER_PAGE, PLANES_PER_PAGE);
+
   };
 
-  handleTabChange = (event, value) => {
+  handleTabChange = (event, selectedStatus) => {
 
-    this.setState({ value: value });
-    this.fetchManyPlanes(value, -1, 0, 10);
+    this.setState({ selectedStatus: selectedStatus });
+    this.fetchManyPlanes(selectedStatus, -1, 0, PLANES_PER_PAGE);
 
   };
 
@@ -129,7 +126,7 @@ class Planes extends React.Component {
 
   componentWillMount() {
 
-    this.fetchManyPlanes(STATUS.FOR_SALE, -1, 0, 10);
+    this.fetchManyPlanes(STATUS.FOR_SALE, -1, 0, PLANES_PER_PAGE);
 
   }
 
@@ -143,7 +140,7 @@ class Planes extends React.Component {
                     <CircularProgress/>
                 </div>
     } else {
-        planeList = <PlaneGridList planes={this.state.planes} handlePageChange={this.handlePageChange}/>;
+        planeList = <PlaneGridList planes={this.state.planes} pageCount={Math.ceil(this.state.count/PLANES_PER_PAGE)} handlePageChange={this.handlePageChange}/>;
     }
 
 
@@ -169,7 +166,7 @@ class Planes extends React.Component {
           <Tabs
             center
             className={classes.Tabs}
-            value={this.state.value}
+            value={this.state.selectedStatus}
             onChange={this.handleTabChange}
             indicatorColor="teal">
             <Tab value={STATUS.FOR_SALE} className={classes.Tab} label="For Sale" />
