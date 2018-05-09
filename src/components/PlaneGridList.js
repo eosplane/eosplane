@@ -268,6 +268,7 @@ class PlaneGridList extends React.Component {
             //              nextLabel={"next"}
                       //  breakLabel={<a href="">...</a>}
                       //  breakClassName={"break-me"}
+                       initialPage={this.props.initialPage}
                        pageCount={this.props.pageCount}
                        marginPagesDisplayed={1}
                        pageRangeDisplayed={3}
@@ -299,6 +300,7 @@ PlaneGridList.propTypes = {
   classes: PropTypes.object.isRequired,
   planes: PropTypes.object.isRequired,
   pageCount: PropTypes.number.isRequired,
+  initialPage: PropTypes.number.isRequired,
   handlePageChange: PropTypes.func.isRequired,
 };
 

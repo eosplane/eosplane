@@ -83,26 +83,42 @@ class Planes extends React.Component {
       progress: true,
       planes: [],
       count: 0,
+      initialPage: 0,
       selectedStatus: STATUS.FOR_SALE,
       sortBy: SORT_BY.MOST_INEXPENSIVE_FIRST,
     };
   }
 
   handlePageChange = (data) => {
+    if(this.state.initialPage === data.selected) {
+      return;
+    }
 
+    this.setState({
+      progress: true,
+      initialPage: data.selected,
+    });
     this.fetchManyPlanes(this.state.selectedStatus, this.state.sortBy, data.selected * PLANES_PER_PAGE, PLANES_PER_PAGE);
 
   };
 
   handleTabChange = (event, selectedStatus) => {
 
-    this.setState({ selectedStatus: selectedStatus });
+    this.setState({
+      progress: true,
+      selectedStatus: selectedStatus,
+      initialPage: 0,
+    });
     this.fetchManyPlanes(selectedStatus, this.state.sortBy, 0, PLANES_PER_PAGE);
 
   };
 
   handleSortChange = name => event => {
-    this.setState({ sortBy: event.target.value });
+    this.setState({
+      progress: true,
+      sortBy: event.target.value,
+      initialPage: 0,
+    });
     this.fetchManyPlanes(this.state.selectedStatus, event.target.value, 0, PLANES_PER_PAGE);
   };
 
@@ -126,8 +142,9 @@ class Planes extends React.Component {
   };
 
   componentWillMount() {
-    
+
     this.setState({
+      progress: true,
       selectedStatus: STATUS.FOR_SALE,
       sortBy: SORT_BY.MOST_INEXPENSIVE_FIRST,
     });
@@ -146,7 +163,7 @@ class Planes extends React.Component {
                     <CircularProgress/>
                 </div>
     } else {
-        planeList = <PlaneGridList planes={this.state.planes} pageCount={Math.ceil(this.state.count/PLANES_PER_PAGE)} handlePageChange={this.handlePageChange}/>;
+        planeList = <PlaneGridList planes={this.state.planes} pageCount={Math.ceil(this.state.count/PLANES_PER_PAGE)} initialPage={this.state.initialPage} handlePageChange={this.handlePageChange}/>;
     }
 
 
