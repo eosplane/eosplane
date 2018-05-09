@@ -11,6 +11,13 @@ import STATUS from '../PlaneStatus';
 import crc from 'js-crc';
 
 const PLANES_PER_PAGE = 12;
+const SORT_BY = {
+  MOST_INEXPENSIVE_FIRST: 1,
+  MOST_EXPENSIVE_FIRST: 2,
+  NEWEST_FIRST: 3,
+  OLDEST_FIRST: 4,
+
+}
 
 const styles = theme => ({
   root: {
@@ -77,41 +84,35 @@ class Planes extends React.Component {
       planes: [],
       count: 0,
       selectedStatus: STATUS.FOR_SALE,
-      sortBy: 0,
+      sortBy: SORT_BY.MOST_INEXPENSIVE_FIRST,
     };
   }
 
   handlePageChange = (data) => {
 
-    this.fetchManyPlanes(this.state.selectedStatus, -1, data.selected * PLANES_PER_PAGE, PLANES_PER_PAGE);
+    this.fetchManyPlanes(this.state.selectedStatus, this.state.sortBy, data.selected * PLANES_PER_PAGE, PLANES_PER_PAGE);
 
   };
 
   handleTabChange = (event, selectedStatus) => {
 
     this.setState({ selectedStatus: selectedStatus });
-    this.fetchManyPlanes(selectedStatus, -1, 0, PLANES_PER_PAGE);
+    this.fetchManyPlanes(selectedStatus, this.state.sortBy, 0, PLANES_PER_PAGE);
 
   };
 
   handleSortChange = name => event => {
     this.setState({ sortBy: event.target.value });
-
-    this.setState({progress: true});
-    setTimeout(() => {
-      this.setState({
-        progress: false,
-      });
-    }, 2e3);
+    this.fetchManyPlanes(this.state.selectedStatus, event.target.value, 0, PLANES_PER_PAGE);
   };
 
   goToPlane(planeId) {
     this.context.router.transitionTo(`/plane/${planeId}`);
   }
 
-  fetchManyPlanes = (status, sort, skip, limit) => {
+  fetchManyPlanes = (status, sortBy, skip, limit) => {
     // get plane
-    axios.get('http://localhost:8080/fetch_many_planes?status=' + status + '&sort=' + sort + '&skip=' + skip + '&limit=' + limit)
+    axios.get('http://localhost:8080/fetch_many_planes?status=' + status + '&sortby=' + sortBy + '&skip=' + skip + '&limit=' + limit)
       .then( (response) => {
         this.setState({
           planes: response.data.planes,
@@ -125,8 +126,13 @@ class Planes extends React.Component {
   };
 
   componentWillMount() {
+    
+    this.setState({
+      selectedStatus: STATUS.FOR_SALE,
+      sortBy: SORT_BY.MOST_INEXPENSIVE_FIRST,
+    });
 
-    this.fetchManyPlanes(STATUS.FOR_SALE, -1, 0, PLANES_PER_PAGE);
+    this.fetchManyPlanes(STATUS.FOR_SALE, SORT_BY.MOST_INEXPENSIVE_FIRST, 0, PLANES_PER_PAGE);
 
   }
 
@@ -156,10 +162,10 @@ class Planes extends React.Component {
                 onChange={this.handleSortChange('age')}
                 className={classes.SortBy}
               >
-                <option value={0}>Most expensive first</option>
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
+                <option value={SORT_BY.MOST_INEXPENSIVE_FIRST}>Most inexpensive first</option>
+                <option value={SORT_BY.MOST_EXPENSIVE_FIRST}>Most expensive first</option>
+                <option value={SORT_BY.NEWEST_FIRST}>Newest first</option>
+                <option value={SORT_BY.OLDEST_FIRST}>Oldest first</option>
               </Select>
             </div>
 
