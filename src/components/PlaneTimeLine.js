@@ -7,6 +7,12 @@ import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timel
 import 'react-vertical-timeline-component/newStyle.css';
 import '../css/main.css';
 
+const HISTORY_ACTION = {
+  CREATE: 1,
+  SALE: 2,
+  AUCTION: 3,
+
+}
 
 const styles = theme => ({
   root: {
@@ -29,19 +35,42 @@ class PlaneTimeLine extends React.Component {
 
     const { classes } = this.props;
 
-    const data = [
-          {name: '2017-02-28 13:23:22', price: 1},
-          {name: '2017-03-28 13:23:22', price: 1.33},
-          {name: '2017-04-28 13:23:22', price: 2},
-          {name: '2017-05-28 13:23:22', price: 5.7},
-          {name: '2017-06-28 13:23:22', price: 4.3},
-          {name: '2017-07-28 13:23:22', price: 2.1},
-          {name: '2017-08-28 13:23:22', price: 3.2},
-    ];
+    let chartData = [];
+    let timelineData = [];
+
+    for (let i = 0, length = this.props.plane.history.length; i < length; i++) {
+
+      // chart data
+      const chartItem = this.props.plane.history[length - i - 1];
+      chartData[i] = {};
+      chartData[i].name = chartItem.timestamp;
+      if (chartItem.action === HISTORY_ACTION.CREATE) {
+        chartData[i].price = 0;
+      } else {
+        chartData[i].price = chartItem.price;
+      }
+
+      // timeline data
+      const timelineItem = this.props.plane.history[i];
+
+      timelineData[i] = {};
+      timelineData[i].timestamp = timelineItem.timestamp
+
+      if (timelineItem.action === HISTORY_ACTION.CREATE){
+        timelineData[i].action = "Create";
+        timelineData[i].desc = "Created by factory.";
+      } else if (timelineItem.action === HISTORY_ACTION.SALE){
+        timelineData[i].action = "Sale";
+        timelineData[i].desc = timelineItem.buyer + " bought the plane from " + timelineItem.saler + " at " + timelineItem.price + " EOS.";
+      } else if (timelineItem.action === HISTORY_ACTION.AUCTION){
+        timelineData[i].action = "Auction";
+        timelineData[i].desc = timelineItem.buyer + " won the auction at " + timelineItem.price + " EOS.";
+      }
+    }
 
     return (
       <div className={classes.root}>
-        <AreaChart className="areaChart" width={360} height={180} data={data}
+        <AreaChart className="areaChart" width={360} height={180} data={chartData}
               margin={{top: 10, right: 10, left: -20, bottom: 0}}>
           <XAxis dataKey="name"/>
           <YAxis/>
@@ -51,65 +80,21 @@ class PlaneTimeLine extends React.Component {
         </AreaChart>
 
         <VerticalTimeline >
-          <VerticalTimelineElement
-            // className="vertical-timeline-element--work"
-            date="2017-02-28 13:23:22"
-            iconStyle={{ background: '#e0f2f1'}}
-            icon={<AirplanemodeActive />}
-          >
-            <h3 >Sale</h3>
-            <p>
-              The plane was saled to Alice at 2.32 EOS.
-            </p>
-          </VerticalTimelineElement>
+
+          {timelineData.map(item => (
           <VerticalTimelineElement
             className="vertical-timeline-element--work"
-            date="2010 - 2011"
+            date={item.timestamp}
             iconStyle={{ background: '#e0f2f1'}}
             icon={<AirplanemodeActive />}
           >
-            <h3 className="vertical-timeline-element-title">Art Director</h3>
-            <h4 className="vertical-timeline-element-subtitle">San Francisco, CA</h4>
+            <h3 >{item.action}</h3>
             <p>
-              Creative Direction, User Experience, Visual Design, SEO, Online Marketing
+              {item.desc}
             </p>
           </VerticalTimelineElement>
-          <VerticalTimelineElement
-            className="vertical-timeline-element--work"
-            date="2008 - 2010"
-            iconStyle={{ background: '#e0f2f1'}}
-            icon={<AirplanemodeActive />}
-          >
-            <h3 className="vertical-timeline-element-title">Web Designer</h3>
-            <h4 className="vertical-timeline-element-subtitle">Los Angeles, CA</h4>
-            <p>
-              User Experience, Visual Design
-            </p>
-          </VerticalTimelineElement>
-          <VerticalTimelineElement
-            className="vertical-timeline-element--work"
-            date="2006 - 2008"
-            iconStyle={{ background: '#e0f2f1'}}
-            icon={<AirplanemodeActive />}
-          >
-            <h3 className="vertical-timeline-element-title">Web Designer</h3>
-            <h4 className="vertical-timeline-element-subtitle">San Francisco, CA</h4>
-            <p>
-              User Experience, Visual Design
-            </p>
-          </VerticalTimelineElement>
-          <VerticalTimelineElement
-            className="vertical-timeline-element--education"
-            date="April 2013"
-            iconStyle={{ background: '#e0f2f1'}}
-            icon={<AirplanemodeActive />}
-          >
-            <h3 className="vertical-timeline-element-title">Content Marketing for Web, Mobile and Social Media</h3>
-            <h4 className="vertical-timeline-element-subtitle">Online Course</h4>
-            <p>
-              Strategy, Social Media
-            </p>
-          </VerticalTimelineElement>
+          ))}
+
         </VerticalTimeline>
     </div>
     );
@@ -118,6 +103,7 @@ class PlaneTimeLine extends React.Component {
 
 PlaneTimeLine.propTypes = {
   classes: PropTypes.object.isRequired,
+  plane: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(PlaneTimeLine);

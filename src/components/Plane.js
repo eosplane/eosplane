@@ -295,15 +295,9 @@ class Plane extends React.Component {
     // get plane
     axios.get('http://localhost:8080/fetch_one_plane?id=' + this.props.planeId)
       .then( (response) => {
-        let plane = {
-          id: response.data.plane_id,
-          image: "/planes/" + crc.crc32(""+response.data.plane_id),
-          desc: response.data.desc,
-          score: response.data.score,
-          price: response.data.price.quantity,
-          status: response.data.status,
-          owner: response.data.owner
-        }
+        let plane = response.data;
+        plane.id = plane.plane_id;
+        plane.price = plane.price.quantity
 
         this.setState({
           plane: plane,
@@ -436,7 +430,7 @@ class Plane extends React.Component {
                   {buyButton}
                 </div>
 
-              <PlaneTimeLine/>
+              <PlaneTimeLine plane={this.state.plane}/>
               {bidHistory}
               <SaleDialog
                 plane={this.state.plane}
