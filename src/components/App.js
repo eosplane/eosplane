@@ -5,12 +5,13 @@ import TopAppBar from './TopAppBar';
 import Planes from './Planes';
 import Plane from './Plane';
 import GamePanel from './GamePanel';
+import Footer from './Footer';
 import EOS from 'eosjs';
 
 const styles = {
   root: {
     width: '100%',
-  },
+  }, 
 };
 
 class App extends React.Component {
@@ -101,7 +102,10 @@ class App extends React.Component {
 
             />
 
+
     let mainContent = "";
+
+    let footer = <Footer/>
 
     if(this.props.pathname === "/"){
       mainContent = <Planes/>
@@ -114,17 +118,18 @@ class App extends React.Component {
                     />
     } else if (this.props.pathname.startsWith("/upgrade/")) {
       topBar = "";
+      footer = "";
       mainContent = <GamePanel
                       planeId={this.props.params['planeId']}
                     />
-    }
 
+    }
 
     return (
       <div className={classes.root}>
         {topBar}
         {mainContent}
-
+        {footer}
       </div>
     );
   }
