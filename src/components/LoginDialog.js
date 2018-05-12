@@ -24,7 +24,6 @@ class LoginDialog extends React.Component {
       login: {},
       showPassword: false,
       validAccountName: true,
-      validOwnerKey: true,
       validActiveKey: true,
     };
   }
@@ -36,10 +35,6 @@ class LoginDialog extends React.Component {
 
     if(prop === "accountName"){
       this.setState({ validAccountName: event.target.value !== null && event.target.value !== ""})
-    }
-
-    if(prop === "ownerKey"){
-      this.setState({ validOwnerKey: event.target.value !== null && event.target.value !== ""})
     }
 
     if(prop === "activeKey"){
@@ -57,7 +52,6 @@ class LoginDialog extends React.Component {
     this.setState({
       login: {},
       validAccountName: true,
-      validOwnerKey: true,
       validActiveKey: true,
     })
   };
@@ -88,36 +82,22 @@ class LoginDialog extends React.Component {
       this.setState({ validAccountName: false });
     }
 
-    if(this.state.login["ownerKey"] !== null && this.state.login["ownerKey"] !== ""){
-      this.setState({ validOwnerKey: true });
-    } else {
-      this.setState({ validOwnerKey: false });
-    }
-
     if(this.state.login["activeKey"] !== null && this.state.login["activeKey"] !== ""){
       this.setState({ validActiveKey: true });
     } else {
       this.setState({ validActiveKey: false });
     }
 
-    if(!this.state.validAccountName || !this.state.validOwnerKey || !this.state.validActiveKey) {
+    if(!this.state.validAccountName || !this.state.validActiveKey) {
       return;
     }
 
     //login logic
-    if(this.state.login["accountName"] && this.state.login["ownerKey"] && this.state.login["activeKey"]) {
+    if(this.state.login["accountName"] && this.state.login["activeKey"]) {
       eos.getAccount(this.state.login["accountName"])
       .then(account => {
         // check private keys
         account["permissions"].forEach((item, index, array) => {
-          if(item["perm_name"] === "owner"){
-            //owner key
-            const pubkey = item["required_auth"]["keys"][0]["key"];
-            if(!ecc.isValidPrivate(this.state.login["ownerKey"]) || ecc.privateToPublic(this.state.login["ownerKey"]) !== pubkey){
-              this.setState({ validOwnerKey: false });
-            }
-          }
-
           if(item["perm_name"] === "active"){
             //active key
             const pubkey = item["required_auth"]["keys"][0]["key"];
@@ -127,7 +107,7 @@ class LoginDialog extends React.Component {
           }
         });
 
-        if(this.state.validAccountName && this.state.validOwnerKey && this.state.validActiveKey){
+        if(this.state.validAccountName && this.state.validActiveKey){
           this.props.loginSucceed(this.state.login, account);
           this.handleClose();
         }
@@ -141,15 +121,10 @@ class LoginDialog extends React.Component {
 
   render() {
     let accountNameHelpText = "";
-    let ownerKeyHelpText = "";
     let activeKeyHelpText = "";
 
     if (!this.state.validAccountName) {
       accountNameHelpText = <FormHelperText>Invalid EOS account name</FormHelperText>
-    }
-
-    if (!this.state.validOwnerKey) {
-      ownerKeyHelpText = <FormHelperText>Invalid Owner Key</FormHelperText>;
     }
 
     if (!this.state.validActiveKey) {
@@ -173,27 +148,6 @@ class LoginDialog extends React.Component {
               <InputLabel>EOS Account Name</InputLabel>
               <Input autoFocus={true} id="accountName" value={this.state.name} onChange={this.handleChange("accountName")} />
               {accountNameHelpText}
-            </FormControl>
-
-            <FormControl fullWidth error={!this.state.validOwnerKey}>
-              <InputLabel>Owner Key</InputLabel>
-              <Input
-                id="ownerKey"
-                type={this.state.showPassword ? 'text' : 'password'}
-                value={this.state.password}
-                onChange={this.handleChange('ownerKey')}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={this.handleClickShowPasssword}
-                      onMouseDown={this.handleMouseDownPassword}
-                    >
-                      {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-              {ownerKeyHelpText}
             </FormControl>
 
             <FormControl fullWidth error={!this.state.validActiveKey}>
