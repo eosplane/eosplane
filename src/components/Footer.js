@@ -113,7 +113,7 @@ const styles = {
   }
 };
 
-class App extends React.Component {
+class Footer extends React.Component {
 
   render() {
     const { classes } = this.props;
@@ -156,8 +156,8 @@ class App extends React.Component {
   }
 }
 
-App.propTypes = {
+Footer.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Footer);
