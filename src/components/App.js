@@ -6,12 +6,14 @@ import Planes from './Planes';
 import Plane from './Plane';
 import GamePanel from './GamePanel';
 import Footer from './Footer';
+import TermsOfUse from './TermsOfUse';
+import PrivacyPolicy from './PrivacyPolicy';
 import EOS from 'eosjs';
 
 const styles = {
   root: {
     width: '100%',
-  }, 
+  },
 };
 
 class App extends React.Component {
@@ -122,7 +124,10 @@ class App extends React.Component {
       mainContent = <GamePanel
                       planeId={this.props.params['planeId']}
                     />
-
+    } else if (this.props.pathname === "/terms-of-use") {
+      mainContent = <TermsOfUse/>
+    } else if (this.props.pathname === "/privacy-policy") {
+      mainContent = <PrivacyPolicy/>
     }
 
     return (
